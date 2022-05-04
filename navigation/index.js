@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -25,27 +26,26 @@ function MyStack() {
   return (
     <Stack.Navigator
       initialRouteName="main"
+      headerStyle={{
+        color: "#fff",
+        backgroundColor: Colors.primary,
+      }}
+      options={{}}
       screenOptions={{
-        headerTitle: "",
+        headerTitle: () => (
+          <Image style={{}} source={require("../assets/apl.png")} />
+        ),
+
         headerShown: true,
         headerStyle: {
-          backgroundColor: Platform.OS === "android" ? Colors.primary : "",
+          backgroundColor: Colors.primary,
         },
-        // headerTintColor:
-        headerTitleStyle: {
-          fontWeight: "bold",
-          color: Platform.OS === "android" ? "white" : Colors.primary,
-        },
+        // headerRight: () => (
+        //   <Image style={{}} source={require("../assets/apl.png")} />
+        // ),
       }}
     >
-      <Stack.Screen
-        name="main"
-        component={MainScreen}
-        options={{
-          title: "APL - Application",
-        }}
-        screenOptions={{ headerShown: false }}
-      />
+      <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="scanning" component={Scanning} />
       <Stack.Screen
         name="login"
@@ -75,6 +75,9 @@ function MyStack() {
   );
 }
 function MyTabs() {
+  const setUser = (val) => {
+    console.log(val + "  " + "Reza");
+  };
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -85,7 +88,7 @@ function MyTabs() {
         }}
         screenOptions={{
           tabBarActiveTintColor: Colors.accentColor,
-          headerShown: true,
+          headerShown: false,
           headerLeft: () => (
             <Image
               style={{
@@ -114,8 +117,10 @@ function MyTabs() {
         <Tab.Screen
           name="login"
           component={Login}
+          initialParams={{}}
           options={{
             headerStyle: { backgroundColor: "#242845" },
+
             headerTitle: "",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons

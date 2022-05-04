@@ -12,7 +12,7 @@ import Colors from "../constants/Colors";
 const MainScreen = (props) => {
   useEffect(() => {
     props.navigation.setOptions({
-      headerShown: false,
+      headerShown: true,
     });
   });
   return (
