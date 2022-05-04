@@ -18,7 +18,9 @@ const Scanning = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [text, setText] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [userModalVisible, setUserModalVisible] = useState(false);
+  const [detail, setDetails] = useState([]);
   const [user, setUser] = useState("");
   const [users, setUsers] = useState([]);
 
@@ -109,6 +111,11 @@ const Scanning = (props) => {
     );
   return (
     <View style={styles.top}>
+      <DetailsModal
+        detailsModalVisible={detailsModalVisible}
+        setDetailsModalVisible={setDetailsModalVisible}
+        detail={detail}
+      ></DetailsModal>
       {userModalVisible && (
         <SelectUser
           userModalVisible={userModalVisible}
