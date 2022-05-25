@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const ApiGet = async (methodname, args) => {
   try {
@@ -8,20 +8,35 @@ const ApiGet = async (methodname, args) => {
 
     var url = apiUrl + `methodname=${methodname}&args=${args}`;
     console.log(url);
-    const response = await fetch(url);
-    console.log(response);
-    var json = {};
-    if (response === "False" || response === "True") {
-      json = { result: response };
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      }
+    })
+    .then((response) => {
+      return response.json();
+    });
 
-    } else {
-      json = await response.json();
-    }
+    //  fetch(url,{
+    //   method: 'GET',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json'
+      
+    //  }}).then((response) => {
+    //   console.log("Response: "+JSON.stringify(response)); 
+    //   response.json()})
+    //  .then((json) => {
+      
+    //    return json;
+    //  })
+    //  .catch((error) => {
+    //    console.error(error);
+    //  });
 
-    console.log("it returns: " + json);
-    return json;
   } catch (error) {
-    console.error(error);
+  //  console.error('Kooni : '+error);
   }
 };
 

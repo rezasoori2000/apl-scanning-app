@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+
 import DefaultText from "./DefaultText";
 
 const DetailItem = (props) => {
@@ -23,6 +24,7 @@ const DetailItem = (props) => {
         borderBottomWidth: 1,
         backgroundColor: getColor(props.index),
       }}
+      key={props.Index}
     >
       <View>
         <Text style={styles.product}>
@@ -31,7 +33,7 @@ const DetailItem = (props) => {
       </View>
       <View style={styles.detail}>
         <View style={styles.ColourExt}>
-          <Text>{props.ColourExt}</Text>
+          <Text>JobId: {props.ColourExt}</Text>
         </View>
         <View style={styles.ColourInt}>
           <Text>{props.ColourInt}</Text>
@@ -45,11 +47,13 @@ const DetailItem = (props) => {
         >
           <View style={styles.type}>
             <Text>{props.Index}</Text>
-            {props.type == 1 ? (
+            {props.Type == 1 ? (
               <MaterialCommunityIcons name="ruler" size={24} color="black" />
-            ) : props.type == 2 ? (
+            ) : props.Type == 2 ? (
               <MaterialCommunityIcons name="puzzle" size={24} color="black" />
-            ) : (
+            ) : props.Type == 4 ? (
+              <MaterialCommunityIcons name="glass-cocktail" size={24} color="black" />
+            ): (
               <MaterialCommunityIcons
                 name="align-horizontal-left"
                 size={24}
@@ -60,7 +64,7 @@ const DetailItem = (props) => {
 
           <View style={styles.Qty}>
             <Text>
-              {props.Qty}/{props.QtyTotal}x{props.Size1}
+              {props.Qty}/{props.QtyTotal}x{props.Size1}mm x{props.Size2}mm
             </Text>
           </View>
         </View>

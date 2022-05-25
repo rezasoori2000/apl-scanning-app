@@ -13,15 +13,15 @@ import Colors from "../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 const DetailsModal = (props) => {
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={props.detailsModalVisible}
-      onRequestClose={() => {
-        setDetailsModalVisible(!detailsModalVisible);
-      }}
-    >
-      <View style={styles.centeredView}>
+    // <Modal
+    //   animationType="slide"
+    //   transparent={true}
+    //   visible={props.detailsModalVisible}
+    //   onRequestClose={() => {
+    //     setDetailsModalVisible(!detailsModalVisible);
+    //   }}
+    // >
+      <View>
         <View style={styles.modalView}>
           {props.detail.map((d, i) => (
             <View
@@ -37,7 +37,7 @@ const DetailsModal = (props) => {
               >
                 <Text style={styles.modalText}>{d.Code}</Text>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   color={Colors.accentColor}
                   onPress={() => {
                     props.setDetailsModalVisible(!props.detailsModalVisible);
@@ -52,7 +52,7 @@ const DetailsModal = (props) => {
                       color={Colors.accentColor}
                     />
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View
                 style={{
@@ -68,11 +68,34 @@ const DetailsModal = (props) => {
                 }}
               />
               <DetailList listData={d.Items} />
+              <View style={{justifyContent: "flex-start",flexDirection: "column",height:40}}>
+              <TouchableOpacity
+              color={Colors.accentColor}
+              backgroundColor={Colors.accentColor}
+              
+              onPress={() => {
+                props.callReceived();
+              }}
+              style={[
+                styles.submit,
+                 styles.enabledButton,
+              ]}
+            >
+              <View style={styles.receivedContainer}>
+                <Text style={{ color: 'white' }}>Received</Text>
+                <MaterialCommunityIcons
+                  name="send-circle-outline"
+                  size={24}
+                  color={Colors.accentColor}
+                />
+              </View>
+            </TouchableOpacity>
+            </View>
             </View>
           ))}
         </View>
       </View>
-    </Modal>
+    // </Modal>
   );
 };
 
@@ -80,6 +103,28 @@ const styles = StyleSheet.create({
   closeBtn: {
     borderRadius: 5,
     alignItems: "center",
+  },
+  submit: {
+    borderRadius: 5,
+    backgroundColor: Colors.primary,
+    alignItems: "center",
+    marginEnd: 30,
+    marginStart: 30,
+    shadowColor: "rgba(0,0,0, .4)", // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    elevation: 5, // Android
+    marginTop: -10,
+  },
+  receivedContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 120,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 8,
+    paddingTop: 8,
   },
   modalText: {
     marginBottom: 15,
@@ -97,9 +142,9 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     paddingBottom: 0,
     backgroundColor: "white",
-    borderRadius: 20,
-    width: "99%",
-    paddingTop: 10,
+    borderRadius: 0,
+    
+    paddingTop: 0,
     alignItems: "center",
   },
   smallCloseContainer: {
