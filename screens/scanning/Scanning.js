@@ -37,9 +37,9 @@ const Scanning = (props) => {
       setHasPermission(status === "granted");
     })();
   };
-  const getDetailsApi = async ( ) => {
+  const getDetailsApi = async () => {
     try {
-      var barcode=text.replace(/\D/g, '');
+      var barcode = text.replace(/\D/g, "");
       var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
       setDetails(result);
       setDetailsModalVisible(true);
@@ -52,7 +52,7 @@ const Scanning = (props) => {
     //    setUser(name);
     //  setUserModalVisible(false);
     //console.log(`Modal is false`);
-    var barcode=text.replace(/\D/g, '');
+    var barcode = text.replace(/\D/g, "");
     var result = await callReceivedApi(barcode, user);
 
     // alert(result ? "Received successfully" : "");
@@ -72,13 +72,13 @@ const Scanning = (props) => {
 
       var isReceived = JSON.parse(await ApiGet(methodname, barcode));
 
-      console.log('before if');
+      console.log("before if");
       if (isReceived) {
-        console.log('in received false');
+        console.log("in received false");
         alert("The order is received");
         return false;
       }
-      console.log('Not received');
+      console.log("Not received");
 
       var result = JSON.parse(
         await ApiGet(
@@ -101,7 +101,6 @@ const Scanning = (props) => {
     props.navigation.setOptions({
       headerShown: false,
     });
-
   });
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
@@ -167,40 +166,31 @@ const Scanning = (props) => {
         </View>
       )}
       <View style={styles.scanContainer}>
+        <View style={{ flex: 1, paddingTop: 10, marginBottom: -20 }}>
+          <Text>User: {user}</Text>
+        </View>
         <Text style={{ fontWeight: "bold" }}>
           Sacn is wrong? Enter manually
         </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Sacn is wrong? Enter manually"
-          keyboardType="numeric"
-          onChangeText={setText}
-          onEndEditing={() => setScanned(true)}
-          value={text}
-        />
-      </View>
-      <View style={styles.scanContainer}>
-        <Text style={{ fontWeight: "bold" }}>Company & User Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=" Company & User Name"
-          keyboardType="default"
-          onChangeText={setUser}
-          value={user}
-        />
-      </View>
-      {scanned && (
-        <View style={styles.scanContainer}>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <TextInput
+            style={styles.input}
+            placeholder="Sacn is wrong? Enter manually"
+            keyboardType="numeric"
+            onChangeText={setText}
+            onEndEditing={() => setScanned(true)}
+            value={text}
+          />
           <TouchableOpacity
             color={Colors.accentColor}
             onPress={() => {
               setScanned(false);
               setText(null);
             }}
-            style={styles.submit}
+            style={[styles.submit, styles.againStyle]}
           >
-            <View style={[styles.receivedContainer, styles.enabledButton]}>
-              <Text style={{ color: "white" }}>Again123</Text>
+            <View style={{ width: 30, height: 40 }}>
+              {/* <Text style={{ color: "white" }}></Text> */}
               <MaterialCommunityIcons
                 name="refresh-circle"
                 size={24}
@@ -209,16 +199,6 @@ const Scanning = (props) => {
             </View>
           </TouchableOpacity>
         </View>
-      )}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "flex-start",
-        }}
-      >
-        {/* {scanned && (
-
-        )} */}
       </View>
       <View
         style={{
@@ -301,6 +281,13 @@ const styles = StyleSheet.create({
   enabledButton: {
     backgroundColor: Colors.primary,
   },
+  againStyle: {
+    height: 20,
+    marginTop: 20,
+    marginEnd: -20,
+    marginStart: 10,
+    width: 10,
+  },
   submit: {
     borderRadius: 5,
 
@@ -340,14 +327,14 @@ const styles = StyleSheet.create({
   },
   scanContainer: {
     flexDirection: "column",
-    height: 120,
+    height: 140,
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
     backgroundColor: "#e9e9e9",
     borderBottomColor: "black",
     borderBottomWidth: 2,
-    marginTop:5,
+    marginTop: 5,
   },
   top: {
     flex: 1,
