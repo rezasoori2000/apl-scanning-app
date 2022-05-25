@@ -37,41 +37,60 @@ const Scanning = (props) => {
       setHasPermission(status === "granted");
     })();
   };
-  const getDetailsApi = async (action, value) => {
+  const getDetailsApi = async ( ) => {
     try {
-      var result = JSON.parse(await ApiGet(action, value));
+      var barcode=text.replace(/\D/g, '');
+      var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
       setDetails(result);
       setDetailsModalVisible(true);
     } catch (ex) {
       console.log(ex);
     }
   };
-  const callReceived = async (name) => {
-    console.log(`in call receive with:  ${name}`);
-    setUser(name);
-    setUserModalVisible(false);
-    console.log(`Modal is false`);
+  const callReceived = async () => {
+    console.log(`in call receive with:  ${user}`);
+    //    setUser(name);
+    //  setUserModalVisible(false);
+    //console.log(`Modal is false`);
+    var barcode=text.replace(/\D/g, '');
+    var result = await callReceivedApi(barcode, user);
 
-    var result = await callReceivedApi(text, name);
-
-    alert(result ? "Received successfully" : "");
+    // alert(result ? "Received successfully" : "");
   };
   const callReceivedApi = async (barcode, name) => {
     try {
-      if (user === "") {
-        if (users.length < 1) {
-          getListOfUsers();
-        }
-        setUserModalVisible(true);
-      } else {
-        var result = JSON.parse(
-          await ApiGet(
-            "ReceiveDelivery",
-            `despatchNumber=${barcode}&receiverName=${name}`
-          )
-        );
-        console.log(result);
+      // if (user === "") {
+      //   if (users.length < 1) {
+      //     getListOfUsers();
+      //   }
+      //   setUserModalVisible(true);
+      // } else {
+      // ESP_HS_IsDespatchReceived(int orderDispatchNumber)
+      //ESP_HS_ReceiveDelivery(int orderItemHubId, string receiverName);
+      //List<HubMainService.ProductOrderProxy> ESP_HS_GetDespatchInfo(int orderDispatchNumber);
+      var methodname = "ESP_HS_IsDespatchReceived";
+
+      var isReceived = JSON.parse(await ApiGet(methodname, barcode));
+
+      console.log('before if');
+      if (isReceived) {
+        console.log('in received false');
+        alert("The order is received");
+        return false;
       }
+      console.log('Not received');
+
+      var result = JSON.parse(
+        await ApiGet(
+          "ESP_HS_ReceiveDelivery",
+          `despatchNumber=${barcode}&receiverName=${name}`
+        )
+      );
+      if (result) alert("Successfully submitted");
+      else alert("Error in submitting order");
+
+      console.log(result);
+      // }
     } catch (ex) {
       console.log(ex);
     }
@@ -79,11 +98,14 @@ const Scanning = (props) => {
 
   useEffect(() => {
     askForPermission();
+    props.navigation.setOptions({
+      headerShown: false,
+    });
+
   });
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
     setScanned(true);
-    console.log(`type: ${type} \n data: ${data}`);
   };
 
   if (hasPermission === null)
@@ -115,6 +137,7 @@ const Scanning = (props) => {
         detailsModalVisible={detailsModalVisible}
         setDetailsModalVisible={setDetailsModalVisible}
         detail={detail}
+        callReceived={callReceived}
       ></DetailsModal>
       {userModalVisible && (
         <SelectUser
@@ -143,19 +166,31 @@ const Scanning = (props) => {
           </TouchableOpacity> */}
         </View>
       )}
+      <View style={styles.scanContainer}>
+        <Text style={{ fontWeight: "bold" }}>
+          Sacn is wrong? Enter manually
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Sacn is wrong? Enter manually"
+          keyboardType="numeric"
+          onChangeText={setText}
+          onEndEditing={() => setScanned(true)}
+          value={text}
+        />
+      </View>
+      <View style={styles.scanContainer}>
+        <Text style={{ fontWeight: "bold" }}>Company & User Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder=" Company & User Name"
+          keyboardType="default"
+          onChangeText={setUser}
+          value={user}
+        />
+      </View>
       {scanned && (
         <View style={styles.scanContainer}>
-          <Text style={styles.mainText}>Scanned</Text>
-          <Text
-            style={{
-              borderColor: "black",
-              textDecorationLine: "underline",
-              paddingTop: 10,
-            }}
-          >
-            {text}
-          </Text>
-
           <TouchableOpacity
             color={Colors.accentColor}
             onPress={() => {
@@ -164,8 +199,8 @@ const Scanning = (props) => {
             }}
             style={styles.submit}
           >
-            <View style={styles.receivedContainer}>
-              <Text style={{ color: "white" }}>Again</Text>
+            <View style={[styles.receivedContainer, styles.enabledButton]}>
+              <Text style={{ color: "white" }}>Again123</Text>
               <MaterialCommunityIcons
                 name="refresh-circle"
                 size={24}
@@ -181,21 +216,9 @@ const Scanning = (props) => {
           alignItems: "flex-start",
         }}
       >
-        {scanned && (
-          <View style={styles.scanContainer}>
-            <Text style={{ fontWeight: "bold" }}>
-              Sacn is wrong? Enter manually
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Sacn is wrong? Enter manually"
-              keyboardType="numeric"
-              onChangeText={setText}
-              onEndEditing={() => setScanned(true)}
-              value={text}
-            />
-          </View>
-        )}
+        {/* {scanned && (
+
+        )} */}
       </View>
       <View
         style={{
@@ -221,10 +244,16 @@ const Scanning = (props) => {
           >
             <TouchableOpacity
               color={Colors.accentColor}
+              disabled={user === "" || text === ""}
               onPress={() => {
-                callReceivedApi(text, user);
+                callReceived();
               }}
-              style={styles.submit}
+              style={[
+                styles.submit,
+                user === "" || text === ""
+                  ? styles.disabledButton
+                  : styles.enabledButton,
+              ]}
             >
               <View style={styles.receivedContainer}>
                 <Text style={{ color: "white" }}>Received</Text>
@@ -237,11 +266,17 @@ const Scanning = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
               title="Submit"
+              disabled={user === "" || text === ""}
               color={Colors.accentColor}
               onPress={() => {
                 getDetailsApi("GetDispatchInfo", `orderDispatchNumber=${text}`);
               }}
-              style={styles.submit}
+              style={[
+                styles.submit,
+                user === "" || text === ""
+                  ? styles.disabledButton
+                  : styles.enabledButton,
+              ]}
             >
               <View style={styles.receivedContainer}>
                 <Text style={{ color: "white" }}>Details</Text>
@@ -260,9 +295,15 @@ const Scanning = (props) => {
 };
 
 const styles = StyleSheet.create({
+  disabledButton: {
+    backgroundColor: "gray",
+  },
+  enabledButton: {
+    backgroundColor: Colors.primary,
+  },
   submit: {
     borderRadius: 5,
-    backgroundColor: Colors.primary,
+
     alignItems: "center",
     marginEnd: 30,
     marginStart: 30,
@@ -299,14 +340,14 @@ const styles = StyleSheet.create({
   },
   scanContainer: {
     flexDirection: "column",
-    height: 150,
+    height: 120,
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
     backgroundColor: "#e9e9e9",
     borderBottomColor: "black",
     borderBottomWidth: 2,
-    marginTop: 30,
+    marginTop:5,
   },
   top: {
     flex: 1,

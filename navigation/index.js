@@ -45,24 +45,8 @@ function MyStack() {
         // ),
       }}
     >
-      <Stack.Screen name="main" component={MainScreen} />
+      {/* <Stack.Screen name="main" component={MainScreen} /> */}
       <Stack.Screen name="scanning" component={Scanning} />
-      <Stack.Screen
-        name="login"
-        component={Login}
-        options={{
-          headerTitle: "LOGIN",
-          title: "Login",
-        }}
-      />
-      <Stack.Screen
-        name="logout"
-        component={Logout}
-        options={{
-          headerTitle: "LOGOUT",
-          title: "Logout",
-        }}
-      />
       <Stack.Screen
         name="settings"
         component={Settings}
@@ -75,20 +59,18 @@ function MyStack() {
   );
 }
 function MyTabs() {
-  const setUser = (val) => {
-    console.log(val + "  " + "Reza");
-  };
+
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="main"
+        initialRouteName="scanning"
         headerStyle={{
           color: "#fff",
           backgroundColor: Colors.primary,
         }}
         screenOptions={{
           tabBarActiveTintColor: Colors.accentColor,
-          headerShown: false,
+          headerShown: true,
           headerLeft: () => (
             <Image
               style={{
@@ -114,7 +96,7 @@ function MyTabs() {
             ),
           }}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           name="login"
           component={Login}
           initialParams={{}}
@@ -130,7 +112,7 @@ function MyTabs() {
               />
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name="settings"
           component={Settings}

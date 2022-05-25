@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 
-const ApiGet = async (action, value) => {
+const ApiGet = async (methodname, args) => {
   try {
     var apiUrl = "";
     const data = require("../assets/data.json");
     apiUrl = data.apiRoute;
 
-    var url = apiUrl + action;
-    url += value != undefined ? `?${value}` : ``;
+    var url = apiUrl + `methodname=${methodname}&args=${args}`;
     console.log(url);
     const response = await fetch(url);
+    console.log(response);
+    var json = {};
+    if (response === "False" || response === "True") {
+      json = { result: response };
 
-    const json = await response.json();
-    return json;
+    } else {
+      json = await response.json();
+    }
+
     console.log("it returns: " + json);
+    return json;
   } catch (error) {
     console.error(error);
   }
