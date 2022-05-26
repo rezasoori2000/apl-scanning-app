@@ -8,35 +8,11 @@ const ApiGet = async (methodname, args) => {
 
     var url = apiUrl + `methodname=${methodname}&args=${args}`;
     console.log(url);
-    return fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      }
-    })
-    .then((response) => {
-      return response.json();
-    });
-
-    //  fetch(url,{
-    //   method: 'GET',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json'
-      
-    //  }}).then((response) => {
-    //   console.log("Response: "+JSON.stringify(response)); 
-    //   response.json()})
-    //  .then((json) => {
-      
-    //    return json;
-    //  })
-    //  .catch((error) => {
-    //    console.error(error);
-    //  });
+    var response = await fetch(url);
+    return await response.json();
 
   } catch (error) {
-  //  console.error('Kooni : '+error);
+    console.error(error);
   }
 };
 

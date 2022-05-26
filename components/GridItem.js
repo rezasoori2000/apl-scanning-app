@@ -11,7 +11,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import DefaultText from "./DefaultText";
 
-const DetailItem = (props) => {
+const GridItem = (props) => {
   const getColor = (inx) => {
     return inx % 2 == 0 ? "#f7f9ff" : "#e6eaf5";
   };
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   Qty: { alignItems: "flex-end" },
 });
 
-export default DetailItem;
+export default GridItem;

@@ -9,6 +9,7 @@ import {
   Modal,
 } from "react-native";
 import DetailList from "./DetailList";
+import Grid from "./Grid";
 import Colors from "../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 const DetailsModal = (props) => {
@@ -23,6 +24,7 @@ const DetailsModal = (props) => {
     // >
       <View>
         <View style={styles.modalView}>
+        
           {props.detail.map((d, i) => (
             <View
               keyExtractor={(item, index) => {
@@ -36,23 +38,6 @@ const DetailsModal = (props) => {
                 }}
               >
                 <Text style={styles.modalText}>{d.Code}</Text>
-
-                {/* <TouchableOpacity
-                  color={Colors.accentColor}
-                  onPress={() => {
-                    props.setDetailsModalVisible(!props.detailsModalVisible);
-                  }}
-                  style={styles.closeBtn}
-                >
-                  <View style={styles.smallCloseContainer}>
-                    <Text style={{ color: "white" }}></Text>
-                    <MaterialCommunityIcons
-                      name="close-circle"
-                      size={24}
-                      color={Colors.accentColor}
-                    />
-                  </View>
-                </TouchableOpacity> */}
               </View>
               <View
                 style={{
@@ -67,8 +52,8 @@ const DetailsModal = (props) => {
                   borderBottomWidth: 1,
                 }}
               />
-              <DetailList listData={d.Items} />
-              <View style={{justifyContent: "flex-start",flexDirection: "column",height:40}}>
+              <DetailList listData={d.Items} key={1}/>
+              <View style={{justifyContent: "flex-start",flexDirection: "column",height:40,paddingTop:10}}>
               <TouchableOpacity
               color={Colors.accentColor}
               backgroundColor={Colors.accentColor}
@@ -100,10 +85,7 @@ const DetailsModal = (props) => {
 };
 
 const styles = StyleSheet.create({
-  closeBtn: {
-    borderRadius: 5,
-    alignItems: "center",
-  },
+
   submit: {
     borderRadius: 5,
     backgroundColor: Colors.primary,
@@ -131,30 +113,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  centeredView: {
-    flex: 1,
-    marginTop: 22,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    marginBottom: 50,
-    paddingBottom: 0,
-    backgroundColor: "white",
-    borderRadius: 0,
-    
-    paddingTop: 0,
-    alignItems: "center",
-  },
-  smallCloseContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
 
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 0,
-    paddingTop: 0,
+  modalView: {
+    marginBottom: 20,
+    backgroundColor: "white",
+    alignItems: "center",
   },
 });
 export default DetailsModal;

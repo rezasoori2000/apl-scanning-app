@@ -4,15 +4,19 @@ import {
   TextInput,
   View,
   Text,
+  Image,
   TouchableOpacity,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Colors from "../../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ApiGet from "../../api/ApiGet";
+import GettHttp from "../../api/GetHttp";
 import DetailsModal from "../../components/DetailsModal";
 import { getUser } from "../../helper/db";
+import Grid from "../../components/Grid";
 
 const Scanning = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -21,7 +25,7 @@ const Scanning = (props) => {
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [detail, setDetails] = useState([]);
   const [user, setUser] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const askForPermission = () => {
     (async () => {
@@ -31,46 +35,57 @@ const Scanning = (props) => {
   };
   const getDetailsApi = async () => {
     try {
+      setIsLoading(true);
       var barcode = text.replace(/\D/g, "");
-      
+
       var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
+      // var result = JSON.parse( GettHttp("ESP_HS_GetDespatchInfo", barcode))
       setDetails(result);
       setDetailsModalVisible(true);
+      setIsLoading(false);
     } catch (ex) {
+      setIsLoading(false);
+
       console.log(ex);
     }
   };
   const callReceived = async () => {
+    setDetailsModalVisible(true);
+
     var barcode = text.replace(/\D/g, "");
     var result = await callReceivedApi(barcode, user);
+    setIsLoading(false);
   };
   const callReceivedApi = async (barcode, name) => {
     try {
       var methodname = "ESP_HS_IsDespatchReceived";
 
       var isReceived = JSON.parse(await ApiGet(methodname, barcode));
-      if (isReceived) {
-        console.log("in received false");
-        alert("The order is received");
+      var message = await JSON.stringify(isReceived);
+      var objMsg = JSON.parse(message);
+      if (message !== "false") {
+        if (objMsg&& objMsg.Message && objMsg.Message !== "")
+          alert("The order is received");
+        else alert("The order is received");
         return false;
       }
       console.log("Not received");
 
-      var result = JSON.parse(
-        await ApiGet(
-          "ESP_HS_ReceiveDelivery",
-          `despatchNumber=${barcode}&receiverName=${name}`
-        )
+      var result = await ApiGet(
+        "ESP_HS_ReceiveDelivery",
+        `despatchNumber=${barcode}&receiverName=${name}`
       );
-      if (result) alert("Successfully submitted");
-      else alert("Error in submitting order");
-
-      console.log(result);
+      message = await JSON.stringify(result);
+      objMsg = JSON.parse(message);
+      if (message !== "true" && (objMsg&& objMsg.Message && objMsg.Message !== ""))  {
+          alert(objMsg.Message);
+      }else
+      alert("Error in submitting data");
     } catch (ex) {
       console.log(ex);
     }
   };
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     const getData = async () => {
       const dbUser = await getUser();
@@ -79,15 +94,15 @@ const Scanning = (props) => {
       }
     };
     getData();
-
     askForPermission();
     props.navigation.setOptions({
       headerShown: false,
     });
-  },[]);
+  }, [isFocused]);
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
     setScanned(true);
+    getDetailsApi();
   };
 
   if (hasPermission === null)
@@ -103,27 +118,10 @@ const Scanning = (props) => {
         <TouchableOpacity onPress={() => askForPermission()}>
           Allow use Camera
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          onPress={() => {
-            console.log("call get call");
-            SoapCall("", "");
-          }}
-        >
-          <Text> Get Call</Text>
-        </TouchableOpacity> */}
       </View>
     );
   return (
     <View style={styles.top}>
-
-      {/* {userModalVisible && (
-        <SelectUser
-          userModalVisible={userModalVisible}
-          setUserModalVisible={setUserModalVisible}
-          callReceived={callReceived}
-          users={users}
-        ></SelectUser>
-      )} */}
       {!scanned && (
         <View style={styles.barCodeBox}>
           <BarCodeScanner
@@ -155,72 +153,69 @@ const Scanning = (props) => {
           <Text>User:</Text>
           <Text style={{ fontWeight: "bold" }}> {user}</Text>
         </View>
-        <View style={{ flex: 1, flexDirection: "row",justifyContent:'flex-start',alignItems:'flex-start' }}>
-          <View style={{justifyContent:'flex-start',width:'50%'}}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter manually"
-            keyboardType="numeric"
-            onChangeText={setText}
-            onEndEditing={() => setScanned(true)}
-            value={text}
-          />
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
+        >
+          <View style={{ justifyContent: "flex-start", width: "70%" }}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter manually"
+              keyboardType="numeric"
+              onChangeText={setText}
+              onEndEditing={() => {
+                getDetailsApi();
+                setScanned(true);
+              }}
+              value={text}
+            />
           </View>
-          <View style={{justifyContent:'flex-start',width:'15%'}}>
-          <TouchableOpacity
-            color={Colors.accentColor}
-            onPress={() => {
-              setScanned(false);
-              setText(null);
-            }}
-            style={[styles.submit, styles.againStyle]}
-          >
-            <View style={{ width: 30, height: 40 }}>
-              {/* <Text style={{ color: "white" }}></Text> */}
-              <MaterialCommunityIcons
-                name="refresh-circle"
-                size={24}
-                color={Colors.accentColor}
-              />
-            </View>
-          </TouchableOpacity>
-          </View>
-          <View style={{justifyContent:'flex-start',width:'40%',marginTop:-10}}>
-          <TouchableOpacity
-              title="Submit"
-              disabled={user === "" || text === ""}
+          <View style={{ justifyContent: "flex-start", width: "15%" }}>
+            <TouchableOpacity
               color={Colors.accentColor}
-              onPress={getDetailsApi}
-              style={[
-                styles.submit,
-                user === "" || text === ""
-                  ? styles.disabledButton
-                  : styles.enabledButton,
-              ]}
+              onPress={() => {
+                setScanned(false);
+                setText(null);
+                setDetailsModalVisible(false);
+              }}
+              style={[styles.submit, styles.againStyle]}
             >
-              <View style={styles.receivedContainer}>
-                <Text style={{ color: "white" }}>Details</Text>
+              <View style={{ width: 30, height: 40 }}>
+                {/* <Text style={{ color: "white" }}></Text> */}
                 <MaterialCommunityIcons
-                  name="beaker-outline"
+                  name="refresh-circle"
                   size={24}
                   color={Colors.accentColor}
                 />
               </View>
             </TouchableOpacity>
-            </View>
+          </View>
         </View>
       </View>
       <View style={styles.detailContainer}>
-      {detailsModalVisible&&
-      <DetailsModal
-        detailsModalVisible={detailsModalVisible}
-        setDetailsModalVisible={setDetailsModalVisible}
-        detail={detail}
-        callReceived={callReceived}
-        key={1}
-      ></DetailsModal>
-      
-      }
+        {isLoading && (
+          <Image
+            source={require("../../assets/loading.gif")}
+            style={{ width: 300, height: 300 }}
+          />
+        )}
+        {
+          detailsModalVisible && (
+            <DetailsModal
+              detailsModalVisible={detailsModalVisible}
+              setDetailsModalVisible={setDetailsModalVisible}
+              detail={detail}
+              callReceived={callReceived}
+              key={1}
+            ></DetailsModal>
+          )
+
+          // <Grid listData={detail} callReceived={callReceived} detailsModalVisible={detailsModalVisible}/>
+        }
       </View>
       <View
         style={{
@@ -243,10 +238,7 @@ const Scanning = (props) => {
               borderRadius: 5,
               paddingBottom: 20,
             }}
-          >
-           
-
-          </View>
+          ></View>
         )}
       </View>
     </View>
@@ -290,8 +282,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-
-
   center: {
     flex: 1,
     justifyContent: "center",
@@ -318,14 +308,14 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     flexDirection: "column",
-    height:490,
+    height: "85%",
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
+    // width: "110%",
     backgroundColor: "#e9e9e9",
-    borderBottomColor: "black",
-    borderBottomWidth: 2,
-    marginTop: 5,
+    // borderBottomColor: "black",
+    // borderBottomWidth: 2,
+    // marginTop: 5,
   },
   top: {
     flex: 1,

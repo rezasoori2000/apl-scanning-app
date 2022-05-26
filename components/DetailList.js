@@ -16,8 +16,7 @@ const DetailList = (props) => {
         Size1={itemData.item.Size1}
         SuppliedInFull={itemData.item.SuppliedInFull}
         Type={itemData.item.Type}
-
-        // Extrusion = 1, Component = 2, Fill = 3
+key={itemData.index + 1}
       />
     );
   };
