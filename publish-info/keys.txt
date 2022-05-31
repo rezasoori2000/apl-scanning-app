@@ -1,0 +1,17 @@
+Type
+JKS
+
+Key Alias
+QHJfc29vcmkvYXBsLXNjYW5uaW5nLWFwcA==
+
+MD5 Certificate Fingerprint
+53:32:39:40:D6:42:7F:C6:99:90:0A:A9:26:C0:64:5C
+
+SHA-1 Certificate Fingerprint
+2C:DB:39:41:40:4F:F1:6D:44:BC:C4:7E:96:06:EE:21:18:8E:8B:4D
+
+SHA-256 Certificate Fingerprint
+8D:84:C2:81:59:BA:59:F4:9D:70:7D:A1:5F:65:50:83:3E:34:19:0E:2E:16:D3:34:5E:8A:63:66:90:81:03:DD
+
+Uploaded At
+Apr 11, 2022 9:42 AM

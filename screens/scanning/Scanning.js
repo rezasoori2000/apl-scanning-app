@@ -25,6 +25,7 @@ const Scanning = (props) => {
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [detail, setDetails] = useState([]);
   const [user, setUser] = useState("");
+  const [company, setCompany] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const askForPermission = () => {
@@ -35,48 +36,50 @@ const Scanning = (props) => {
   };
   const getDetailsApi = async () => {
     try {
+      if (user===''){
+      alert('Please enter company & user name in setting tab');
+      return false;
+      }
       setIsLoading(true);
+      setDetails([]);
       var barcode = text.replace(/\D/g, "");
-
+      var isNotRecevied = await callIsNotReceived(barcode);
+      if (isNotRecevied){     
       var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
       // var result = JSON.parse( GettHttp("ESP_HS_GetDespatchInfo", barcode))
       setDetails(result);
       setDetailsModalVisible(true);
+      }else{
+        alert("The order is already received");
+      }
       setIsLoading(false);
+      
     } catch (ex) {
+      
       setIsLoading(false);
-
+      setDetails([]);
       console.log(ex);
     }
+    
   };
   const callReceived = async () => {
+    
     setDetailsModalVisible(true);
 
     var barcode = text.replace(/\D/g, "");
-    var result = await callReceivedApi(barcode, user);
+    var result = await callReceivedApi(barcode, `${company}-${user}`);
     setIsLoading(false);
   };
   const callReceivedApi = async (barcode, name) => {
     try {
-      var methodname = "ESP_HS_IsDespatchReceived";
-
-      var isReceived = JSON.parse(await ApiGet(methodname, barcode));
-      var message = await JSON.stringify(isReceived);
-      var objMsg = JSON.parse(message);
-      if (message !== "false") {
-        if (objMsg&& objMsg.Message && objMsg.Message !== "")
-          alert("The order is received");
-        else alert("The order is received");
-        return false;
-      }
-      console.log("Not received");
-
+     
       var result = await ApiGet(
         "ESP_HS_ReceiveDelivery",
-        `despatchNumber=${barcode}&receiverName=${name}`
+        `${barcode},${name}`
       );
-      message = await JSON.stringify(result);
+     var message = await JSON.stringify(result);
       objMsg = JSON.parse(message);
+      console.log('submit Received:'+message);
       if (message !== "true" && (objMsg&& objMsg.Message && objMsg.Message !== ""))  {
           alert(objMsg.Message);
       }else
@@ -85,12 +88,24 @@ const Scanning = (props) => {
       console.log(ex);
     }
   };
+  const callIsNotReceived= async (barcode)=> {
+    
+    var methodname = "ESP_HS_IsDespatchReceived";
+    var isReceived = JSON.parse(await ApiGet(methodname, barcode));
+    var message = await JSON.stringify(isReceived);
+    var objMsg = JSON.parse(message);
+    console.log('msg is Received:'+message);
+    
+    return (message === "false");
+  }
   const isFocused = useIsFocused();
   useEffect(() => {
     const getData = async () => {
       const dbUser = await getUser();
       if (dbUser.rows._array.length > 0) {
         setUser(dbUser.rows._array[0].user);
+        setCompany(dbUser.rows._array[0].company);
+        console.log(dbUser.rows._array[0].company+' '+dbUser.rows._array[0].user);
       }
     };
     getData();
@@ -151,7 +166,7 @@ const Scanning = (props) => {
           }}
         >
           <Text>User:</Text>
-          <Text style={{ fontWeight: "bold" }}> {user}</Text>
+          <Text style={{ fontWeight: "bold" }}> {company} - {user}</Text>
         </View>
         <View
           style={{
