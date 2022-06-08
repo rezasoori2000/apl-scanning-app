@@ -16,7 +16,7 @@ const DetailList = (props) => {
         Size1={itemData.item.Size1}
         SuppliedInFull={itemData.item.SuppliedInFull}
         Type={itemData.item.Type}
-key={itemData.index + 1}
+        key={itemData.index + 1}
       />
     );
   };

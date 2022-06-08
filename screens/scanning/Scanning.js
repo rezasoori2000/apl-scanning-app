@@ -20,9 +20,9 @@ import Grid from "../../components/Grid";
 
 const Scanning = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [text, setText] = useState(null);
+  const [text, setText] = useState('');
   const [scanned, setScanned] = useState(false);
-  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [detailsModalVisible, setDetailsContainerVisible] = useState(false);
   const [detail, setDetails] = useState([]);
   const [user, setUser] = useState("");
   const [company, setCompany] = useState("");
@@ -40,15 +40,16 @@ const Scanning = (props) => {
       alert('Please enter company & user name in setting tab');
       return false;
       }
+      console.log('in get details');
       setIsLoading(true);
       setDetails([]);
-      var barcode = text.replace(/\D/g, "");
+      // var barcode = text.replace(/\D/g, "");
+      var barcode = text;
       var isNotRecevied = await callIsNotReceived(barcode);
       if (isNotRecevied){     
       var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
-      // var result = JSON.parse( GettHttp("ESP_HS_GetDespatchInfo", barcode))
       setDetails(result);
-      setDetailsModalVisible(true);
+      setDetailsContainerVisible(true);
       }else{
         alert("The order is already received");
       }
@@ -64,7 +65,7 @@ const Scanning = (props) => {
   };
   const callReceived = async () => {
     
-    setDetailsModalVisible(true);
+    setDetailsContainerVisible(true);
 
     var barcode = text.replace(/\D/g, "");
     var result = await callReceivedApi(barcode, `${company}-${user}`);
@@ -113,11 +114,13 @@ const Scanning = (props) => {
     props.navigation.setOptions({
       headerShown: false,
     });
-  }, [isFocused]);
+    if(scanned){
+      getDetailsApi();
+    }
+  }, [isFocused,scanned]);
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
     setScanned(true);
-    getDetailsApi();
   };
 
   if (hasPermission === null)
@@ -136,6 +139,7 @@ const Scanning = (props) => {
       </View>
     );
   return (
+
     <View style={styles.top}>
       {!scanned && (
         <View style={styles.barCodeBox}>
@@ -146,14 +150,6 @@ const Scanning = (props) => {
             width={"90%"}
             height={350}
           />
-          {/* <TouchableOpacity
-            onPress={() => {
-              console.log("call get call");
-              SoapCall("", "");
-            }}
-          >
-            <Text> Get Call</Text>
-          </TouchableOpacity> */}
         </View>
       )}
       <View style={styles.scanContainer}>
@@ -165,7 +161,12 @@ const Scanning = (props) => {
             flexDirection: "row",
           }}
         >
-          <Text>User:</Text>
+          {/* <Text>User:</Text> */}
+          <MaterialCommunityIcons
+                  name="account"
+                  size={24}
+                  color={Colors.accentColor}
+                />
           <Text style={{ fontWeight: "bold" }}> {company} - {user}</Text>
         </View>
         <View
@@ -176,7 +177,7 @@ const Scanning = (props) => {
             alignItems: "flex-start",
           }}
         >
-          <View style={{ justifyContent: "flex-start", width: "70%" }}>
+          <View style={{ justifyContent: "flex-start", width: "60%",marginLeft:80 }}>
             <TextInput
               style={styles.input}
               placeholder="Enter manually"
@@ -195,12 +196,11 @@ const Scanning = (props) => {
               onPress={() => {
                 setScanned(false);
                 setText(null);
-                setDetailsModalVisible(false);
+                setDetailsContainerVisible(false);
               }}
               style={[styles.submit, styles.againStyle]}
             >
               <View style={{ width: 30, height: 40 }}>
-                {/* <Text style={{ color: "white" }}></Text> */}
                 <MaterialCommunityIcons
                   name="refresh-circle"
                   size={24}
@@ -222,7 +222,7 @@ const Scanning = (props) => {
           detailsModalVisible && (
             <DetailsModal
               detailsModalVisible={detailsModalVisible}
-              setDetailsModalVisible={setDetailsModalVisible}
+              setDetailsModalVisible={setDetailsContainerVisible}
               detail={detail}
               callReceived={callReceived}
               key={1}
@@ -309,6 +309,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     justifyContent: "flex-start",
+    backgroundColor:'#e6eaf5'
   },
   scanContainer: {
     flexDirection: "column",
@@ -323,10 +324,10 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     flexDirection: "column",
-    height: "85%",
+    height: "77%",
     justifyContent: "center",
     alignItems: "center",
-    // width: "110%",
+     width: "95%",
     backgroundColor: "#e9e9e9",
     // borderBottomColor: "black",
     // borderBottomWidth: 2,

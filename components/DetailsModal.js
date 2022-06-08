@@ -22,11 +22,11 @@ const DetailsModal = (props) => {
     //     setDetailsModalVisible(!detailsModalVisible);
     //   }}
     // >
-      <View>
+  
         <View style={styles.modalView}>
         
           {props.detail.map((d, i) => (
-            <View
+            <View style={{width:'100%', height:'95%'}}
               keyExtractor={(item, index) => {
                 return index;
               }}
@@ -79,7 +79,7 @@ const DetailsModal = (props) => {
             </View>
           ))}
         </View>
-      </View>
+    
     // </Modal>
   );
 };
@@ -115,9 +115,12 @@ const styles = StyleSheet.create({
   },
 
   modalView: {
-    marginBottom: 20,
+    marginBottom: 0,
+    marginTop:0,
     backgroundColor: "white",
     alignItems: "center",
+    width: '100%',
+    height: '100%',
   },
 });
 export default DetailsModal;

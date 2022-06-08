@@ -32,11 +32,14 @@ const DetailItem = (props) => {
         </Text>
       </View>
       <View style={styles.detail}>
+      <View style={styles.ColourExt}>
+          <Text>JobId:</Text>
+        </View>
         <View style={styles.ColourExt}>
-          <Text>JobId: {props.ColourExt}</Text>
+          <Text>{props.ColourExt}</Text>
         </View>
         <View style={styles.ColourInt} >
-          <Text>{props.ColourInt}</Text>
+          <Text> {props.ColourInt}</Text>
         </View>
         <View
           style={{
