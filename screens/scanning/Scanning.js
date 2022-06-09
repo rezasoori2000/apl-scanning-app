@@ -43,8 +43,8 @@ const Scanning = (props) => {
       console.log('in get details');
       setIsLoading(true);
       setDetails([]);
-      // var barcode = text.replace(/\D/g, "");
-      var barcode = text;
+      var barcode = text.replace(/\D/g, "");
+   
       var isNotRecevied = await callIsNotReceived(barcode);
       if (isNotRecevied){     
       var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
