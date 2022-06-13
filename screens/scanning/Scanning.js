@@ -20,7 +20,7 @@ import Grid from "../../components/Grid";
 
 const Scanning = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [scanned, setScanned] = useState(false);
   const [detailsModalVisible, setDetailsContainerVisible] = useState(false);
   const [detail, setDetails] = useState([]);
@@ -36,35 +36,43 @@ const Scanning = (props) => {
   };
   const getDetailsApi = async () => {
     try {
-      if (user===''){
-      alert('Please enter company & user name in setting tab');
-      return false;
+      if (user === "") {
+        alert("Please enter company & user name in setting tab");
+        setText("");
+        return false;
       }
-      console.log('in get details');
-      setIsLoading(true);
-      setDetails([]);
-      var barcode = text.replace(/\D/g, "");
-   
-      var isNotRecevied = await callIsNotReceived(barcode);
-      if (isNotRecevied){     
-      var result = JSON.parse(await ApiGet("ESP_HS_GetDespatchInfo", barcode));
-      setDetails(result);
-      setDetailsContainerVisible(true);
-      }else{
-        alert("The order is already received");
+      if (text.length > 1) {
+        var barcode = "";
+        setIsLoading(true);
+        setDetails([]);
+        barcode = text.replace(/\s/g, "");
+        let prefix = barcode.substring(0, 3).toLowerCase();
+
+        if (prefix === "eah" || prefix === "agp") {
+          barcode = barcode.replace(/\D/g, "");
+          var isNotRecevied = await callIsNotReceived(barcode);
+          if (isNotRecevied) {
+            var result = JSON.parse(
+              await ApiGet("ESP_HS_GetDespatchInfo", barcode)
+            );
+            setDetails(result);
+            setDetailsContainerVisible(true);
+          } else {
+            alert("The order is already received");
+          }
+        } else {
+          alert("The barcode is NOT exist within the system!");
+          setText("");
+        }
       }
       setIsLoading(false);
-      
     } catch (ex) {
-      
       setIsLoading(false);
       setDetails([]);
       console.log(ex);
     }
-    
   };
   const callReceived = async () => {
-    
     setDetailsContainerVisible(true);
 
     var barcode = text.replace(/\D/g, "");
@@ -73,32 +81,31 @@ const Scanning = (props) => {
   };
   const callReceivedApi = async (barcode, name) => {
     try {
-     
-      var result = await ApiGet(
-        "ESP_HS_ReceiveDelivery",
-        `${barcode},${name}`
-      );
-     var message = await JSON.stringify(result);
+      var result = await ApiGet("ESP_HS_ReceiveDelivery", `${barcode},${name}`);
+      var message = await JSON.stringify(result);
       objMsg = JSON.parse(message);
-      console.log('submit Received:'+message);
-      if (message !== "true" && (objMsg&& objMsg.Message && objMsg.Message !== ""))  {
-          alert(objMsg.Message);
-      }else
-      alert("Error in submitting data");
+      console.log("submit Received:" + message);
+      if (
+        message !== "true" &&
+        objMsg &&
+        objMsg.Message &&
+        objMsg.Message !== ""
+      ) {
+        alert(objMsg.Message);
+      } else alert("Error in submitting data");
     } catch (ex) {
       console.log(ex);
     }
   };
-  const callIsNotReceived= async (barcode)=> {
-    
+  const callIsNotReceived = async (barcode) => {
     var methodname = "ESP_HS_IsDespatchReceived";
     var isReceived = JSON.parse(await ApiGet(methodname, barcode));
     var message = await JSON.stringify(isReceived);
     var objMsg = JSON.parse(message);
-    console.log('msg is Received:'+message);
-    
-    return (message === "false");
-  }
+    console.log("msg is Received:" + message);
+
+    return message === "false";
+  };
   const isFocused = useIsFocused();
   useEffect(() => {
     const getData = async () => {
@@ -106,7 +113,9 @@ const Scanning = (props) => {
       if (dbUser.rows._array.length > 0) {
         setUser(dbUser.rows._array[0].user);
         setCompany(dbUser.rows._array[0].company);
-        console.log(dbUser.rows._array[0].company+' '+dbUser.rows._array[0].user);
+        console.log(
+          dbUser.rows._array[0].company + " " + dbUser.rows._array[0].user
+        );
       }
     };
     getData();
@@ -114,10 +123,10 @@ const Scanning = (props) => {
     props.navigation.setOptions({
       headerShown: false,
     });
-    if(scanned){
+    if (scanned) {
       getDetailsApi();
     }
-  }, [isFocused,scanned]);
+  }, [isFocused, scanned]);
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
     setScanned(true);
@@ -139,7 +148,6 @@ const Scanning = (props) => {
       </View>
     );
   return (
-
     <View style={styles.top}>
       {!scanned && (
         <View style={styles.barCodeBox}>
@@ -163,11 +171,14 @@ const Scanning = (props) => {
         >
           {/* <Text>User:</Text> */}
           <MaterialCommunityIcons
-                  name="account"
-                  size={24}
-                  color={Colors.accentColor}
-                />
-          <Text style={{ fontWeight: "bold" }}> {company} - {user}</Text>
+            name="account"
+            size={24}
+            color={Colors.accentColor}
+          />
+          <Text style={{ fontWeight: "bold" }}>
+            {" "}
+            {company} - {user}
+          </Text>
         </View>
         <View
           style={{
@@ -177,11 +188,17 @@ const Scanning = (props) => {
             alignItems: "flex-start",
           }}
         >
-          <View style={{ justifyContent: "flex-start", width: "60%",marginLeft:80 }}>
+          <View
+            style={{
+              justifyContent: "flex-start",
+              width: "60%",
+              marginLeft: 80,
+            }}
+          >
             <TextInput
               style={styles.input}
               placeholder="Enter manually"
-              keyboardType="numeric"
+              keyboardType="default"
               onChangeText={setText}
               onEndEditing={() => {
                 getDetailsApi();
@@ -190,7 +207,7 @@ const Scanning = (props) => {
               value={text}
             />
           </View>
-          <View style={{ justifyContent: "flex-start", width: "15%" }}>
+          <View style={{ justifyContent: "flex-start", width: "25%" }}>
             <TouchableOpacity
               color={Colors.accentColor}
               onPress={() => {
@@ -309,7 +326,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     justifyContent: "flex-start",
-    backgroundColor:'#e6eaf5'
+    backgroundColor: "#e6eaf5",
   },
   scanContainer: {
     flexDirection: "column",
@@ -327,7 +344,7 @@ const styles = StyleSheet.create({
     height: "77%",
     justifyContent: "center",
     alignItems: "center",
-     width: "95%",
+    width: "95%",
     backgroundColor: "#e9e9e9",
     // borderBottomColor: "black",
     // borderBottomWidth: 2,
