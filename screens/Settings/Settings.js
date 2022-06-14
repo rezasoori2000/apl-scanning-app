@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput,TouchableOpacity } from "react-native
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import {insertUser,getUser,updatetUser} from "../../helper/db";
-const Settings = () => {
+const Settings = ({ navigation }) => {
   const [user,setUser]=useState('');
   const [id,setId]=useState(0);
   const [company,setCompany]=useState('');
@@ -25,6 +25,8 @@ const Settings = () => {
     
 
     const result=hasValue? await updatetUser(company,user,id): await insertUser(company,user); 
+    navigation.navigate('apl');
+    
   }
   return (
     <View style={{margin:40}}>

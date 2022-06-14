@@ -78,23 +78,21 @@ const Scanning = (props) => {
     var barcode = text.replace(/\D/g, "");
     var result = await callReceivedApi(barcode, `${company}-${user}`);
     setIsLoading(false);
+    setScanned(false);
+    setText("");
+    setDetailsContainerVisible(false);
   };
   const callReceivedApi = async (barcode, name) => {
     try {
+      objMsg ={};
       var result = await ApiGet("ESP_HS_ReceiveDelivery", `${barcode},${name}`);
       var message = await JSON.stringify(result);
-      objMsg = JSON.parse(message);
-      console.log("submit Received:" + message);
-      if (
-        message !== "true" &&
-        objMsg &&
-        objMsg.Message &&
-        objMsg.Message !== ""
-      ) {
-        alert(objMsg.Message);
-      } else alert("Error in submitting data");
+      alert("Successfully received");
+      return true;
+
+
     } catch (ex) {
-      console.log(ex);
+      alert("Error in submitting data" + ex);
     }
   };
   const callIsNotReceived = async (barcode) => {
