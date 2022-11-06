@@ -1,0 +1,23 @@
+{
+  "cli": {
+    "version": ">= 2.6.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {
+      "android":{
+        "serviceAccountKeyPath":"./assets/keys/pc-api-8643332456418021478-378-2d0da51fd691.json",
+        "minifyEnabled": "false"
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ const ApiPost = async (action, value) => {
     apiUrl = data.apiRoute;
 
     apiUrl += action;
+
     var response = await fetch(apiUrl, {
       method: "POST",
       headers: {

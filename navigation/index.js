@@ -1,11 +1,7 @@
 import * as React from "react";
-import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import MainScreen from "../screens/MainScreen";
-import Login from "../screens/account/Login";
-import Logout from "../screens/account/Logout";
 import Settings from "../screens/Settings/Settings";
 import Scanning from "../screens/scanning/Scanning";
 import Colors from "../constants/Colors";

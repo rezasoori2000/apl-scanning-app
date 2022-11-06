@@ -22,52 +22,58 @@ const DetailsModal = (props) => {
     //     setDetailsModalVisible(!detailsModalVisible);
     //   }}
     // >
-  
-        <View style={styles.modalView}>
-        
-          {props.detail.map((d, i) => (
-            <View style={{width:'100%', height:'95%'}}
-              keyExtractor={(item, index) => {
-                return index;
-              }}
-            >
-              <View
-                style={{
-                  justifyContent: "space-between",
-                  flexDirection: "row",
-                }}
-              >
-                <Text style={styles.modalText}>{d.Code}</Text>
-              </View>
-              <View
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: 1,
-                }}
-              />
-              <Text>{d.Items.length} Item(s) </Text>
-              <View
-                style={{
-                  borderBottomColor: "black",
-                  borderBottomWidth: 1,
-                }}
-              />
-              <DetailList listData={d.Items} key={1}/>
-              <View style={{justifyContent: "flex-start",flexDirection: "column",height:40,paddingTop:10}}>
-              <TouchableOpacity
+
+    <View style={styles.modalView}>
+      {props.detail.map((d, i) => (
+        <View
+          style={{ width: "100%", height: "95%" }}
+          key={i}
+          keyExtractor={(item, index) => {
+            return index;
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
+            }}
+          >
+            <Text style={styles.modalText}>
+              {d.Code}- {d.Xml}
+            </Text>
+          </View>
+          <View
+            style={{
+              borderBottomColor: "black",
+              borderBottomWidth: 1,
+            }}
+          />
+          <Text>{d.Items.length} Item(s) </Text>
+          <View
+            style={{
+              borderBottomColor: "black",
+              borderBottomWidth: 1,
+            }}
+          />
+          <DetailList listData={d.Items} key={1} />
+          <View
+            style={{
+              justifyContent: "flex-start",
+              flexDirection: "column",
+              height: 40,
+              paddingTop: 10,
+            }}
+          >
+            <TouchableOpacity
               color={Colors.accentColor}
               backgroundColor={Colors.accentColor}
-              
               onPress={() => {
                 props.callReceived();
               }}
-              style={[
-                styles.submit,
-                 styles.enabledButton,
-              ]}
+              style={[styles.submit, styles.enabledButton]}
             >
               <View style={styles.receivedContainer}>
-                <Text style={{ color: 'white' }}>Received</Text>
+                <Text style={{ color: "white" }}>Received</Text>
                 <MaterialCommunityIcons
                   name="send-circle-outline"
                   size={24}
@@ -75,17 +81,16 @@ const DetailsModal = (props) => {
                 />
               </View>
             </TouchableOpacity>
-            </View>
-            </View>
-          ))}
+          </View>
         </View>
-    
+      ))}
+    </View>
+
     // </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-
   submit: {
     borderRadius: 5,
     backgroundColor: Colors.primary,
@@ -116,11 +121,11 @@ const styles = StyleSheet.create({
 
   modalView: {
     marginBottom: 0,
-    marginTop:0,
+    marginTop: 0,
     backgroundColor: "white",
     alignItems: "center",
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
 export default DetailsModal;

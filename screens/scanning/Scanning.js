@@ -50,11 +50,19 @@ const Scanning = (props) => {
 
         if (prefix === "eah" || prefix === "agp") {
           barcode = barcode.replace(/\D/g, "");
+          console.log('barcode:', barcode);
+          console.log('var isNotRecevied = await callIsNotReceived(barcode);');
+
           var isNotRecevied = await callIsNotReceived(barcode);
+          console.log("Is not Received: ",isNotRecevied);
           if (isNotRecevied) {
             var result = JSON.parse(
               await ApiGet("ESP_HS_GetDespatchInfo", barcode)
             );
+            console.log('----------reza-------------');
+    
+            console.log(result);
+            console.log('----------reza-------------');
             setDetails(result);
             setDetailsContainerVisible(true);
           } else {
