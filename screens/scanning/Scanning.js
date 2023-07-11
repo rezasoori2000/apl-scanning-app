@@ -21,6 +21,7 @@ import Grid from "../../components/Grid";
 const Scanning = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [text, setText] = useState("");
+  const [enable, setEnable] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [detailsModalVisible, setDetailsContainerVisible] = useState(false);
   const [detail, setDetails] = useState([]);
@@ -59,10 +60,8 @@ const Scanning = (props) => {
             var result = JSON.parse(
               await ApiGet("ESP_HS_GetDespatchInfo", barcode)
             );
-            console.log('----------reza-------------');
     
             console.log(result);
-            console.log('----------reza-------------');
             setDetails(result);
             setDetailsContainerVisible(true);
           } else {
@@ -131,11 +130,19 @@ const Scanning = (props) => {
     });
     if (scanned) {
       getDetailsApi();
+    setEnable(false);
+
     }
   }, [isFocused, scanned]);
   const handleBarCodeScanned = ({ type, data }) => {
     setText(data);
+    setEnable(true);
+  };
+  const handleScan= ()=> {
     setScanned(true);
+    setEnable(false);
+
+
   };
 
   if (hasPermission === null)
@@ -161,9 +168,22 @@ const Scanning = (props) => {
             onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
             style={{ marginLeft: 0, paddingLeft: 0 }}
             BarCodeBounds="original"
-            width={"90%"}
-            height={350}
+             width={400}
+            height={330}
           />
+                     <TouchableOpacity
+                     enable={enable}
+                     
+              color={Colors.accentColor}
+              onPress={() => {
+                handleScan();
+              }}
+              //style={[styles.submit, styles.againStyle]}
+            >
+              <View style={{ width:70, height: 30 ,backgroundColor:Colors.accentColor,alignContent:"center",alignItems:'center',marginTop:10,paddingTop:5,borderRadius:10,elevation:5}}>
+                <Text>Scan it</Text>
+              </View>
+            </TouchableOpacity>
         </View>
       )}
       <View style={styles.scanContainer}>
@@ -370,7 +390,7 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     alignItems: "center",
     justifyContent: "flex-start",
-    width: "90%",
+    width: "99%",
     height: "70%",
     overflow: "hidden",
     borderRadius: 30,
