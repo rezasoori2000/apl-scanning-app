@@ -2,7 +2,7 @@
   "expo": {
     "name": "APL orders Scanning",
     "slug": "apl-orders-scanning",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,10 +17,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.apl.scanning.app"
     },
     "android": {
-      "package": "com.apl.orders.scanning",
+      "package": "com.apl.scanning.app",
       "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
