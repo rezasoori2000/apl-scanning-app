@@ -2,7 +2,7 @@
   "expo": {
     "name": "APL orders Scanning",
     "slug": "apl-orders-scanning",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -18,7 +18,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.apl.scanning.app"
+      "bundleIdentifier": "com.apl.scanning.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need access to your camera to scan orders. Otherwise, you need to enter the barcode manually."
+      }
     },
     "android": {
       "package": "com.apl.scanning.app",
