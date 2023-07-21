@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 2.6.0"
+    "version": ">= 2.6.0",
+    "promptToConfigurePushNotifications": false
   },
   "build": {
     "development": {
@@ -14,14 +15,13 @@
   },
   "submit": {
     "production": {
-      "android":{
-        "serviceAccountKeyPath":"./assets/keys/pc-api-8643332456418021478-378-2d0da51fd691.json"
-        
+      "android": {
+        "serviceAccountKeyPath": "./assets/keys/pc-api-8643332456418021478-378-2d0da51fd691.json"
       },
-      "ios":{
-        "appleId":"condaw@aplnz.co.nz",
-        "ascAppId":"6451384771",
-        "appleTeamId":"R26YGTLFFN"
+      "ios": {
+        "appleId": "condaw@aplnz.co.nz",
+        "ascAppId": "6451384771",
+        "appleTeamId": "R26YGTLFFN"
       }
     }
   }
